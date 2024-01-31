@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savings Calculator</title>
+  <script type="text/javascript" src="{{ url_for('static',filename='js/activity4.js') }}"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/main.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/activity4.css') }}">
+  <nav style="padding-left: 1.5%; position: relative;text-align: center;">
+    <a href="{{url_for('dashboard')}}">Dashboard</a>
+    <a href="{{url_for('activities')}}" style="text-decoration: underline;">Activities</a>
+    <a href="{{url_for('blogs')}}">Blogs</a>
+  </nav>
+</head>
+
+<body>
+
+  <div class="container">
+    <h3 class='page-title'>Monthly Savings Calculator</h3>
+    <div class="form-group">
+      <label for="amount" class='form__label'>Starting Amount</label>
+      <input type="text" class="form__input" id="amount" placeholder="Example: 150000">
+    </div>
+
+    <div class="form-group">
+      <label for="rate" class='form__label'>Rate of Return (%)</label>
+      <input type="text" class="form__input" id="rate" placeholder="Example: 12">
+    </div>
+
+    <div class="form-group">
+      <label for="years" class='form__label'>Period (years)</label>
+      <input type="text" class="form__input" id="years" placeholder="Example: 2">
+    </div>
+
+    <input type="button" class="button" value="Calculate" onClick="calculate()">
+    <input type="button" class="button" value="Reset" onClick="reset()">
+  </div>
+
+  <p id='results_table'></p>
+</body>
+
+</html>

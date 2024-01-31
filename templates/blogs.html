@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/blogs.css') }}">
+    <title>Blogs</title>
+    <nav style="padding-left: 1.5%; position: relative;text-align: center;">
+        <a href="{{url_for('dashboard')}}">Dashboard</a>
+        <a href="{{url_for('activities')}}">Activities</a>
+        <a href="{{url_for('blogs')}}" style="text-decoration: underline;">Blogs</a>
+    </nav>
+</head>
+
+<body>
+    <h3 class='page-title' style="text-align: center; font-size: 40px;">Blogs</h3>
+    <h4 style="text-align: center; font-size: 30px; font-style: italic;">Eager to learn more? Check out our favourite
+        blogs on financial discipline!</h4>
+    <div class="container">
+
+        {% for article in articles %}
+        <div class="card">
+            <div class="card__body">
+                <h4>{{article.title}}</h4>
+                <p style="font-size: 20px;">{{article.desc}}</p>
+                <div class="user">
+                    <div class="user__info">
+                        <h5 style="font-size: 18px;">{{article.author}}, {{article.date}}</h5>
+                        <a style="font-size: 16px;" href="{{article.link}}" target=”_blank”>Read More >></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>SIP Calculator</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/activity5.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/main.css') }}">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <nav style="padding-left: 1.5%; position: relative;text-align: center;">
+    <a href="{{url_for('dashboard')}}">Dashboard</a>
+    <a href="{{url_for('activities')}}" style="text-decoration: underline;">Activities</a>
+    <a href="{{url_for('blogs')}}">Blogs</a>
+  </nav>
+</head>
+
+<body>
+  <div class="header" id="topheader">
+    <section class="header-section">
+      <div class="caption-cont">
+
+        <h3 class='page-title'>Systematic Investment Plan (SIP) Calculator</h3>
+
+      </div>
+      <div id="calc-form" class="container">
+        <form action="" class='form'>
+          <div class="row">
+            <div class="col-sm-6">
+              <label class="form__label" for="first-name">Investment Amount(Rs.): <em class="alert">*</em></label>
+              <p id='val_amnt' style="color: red; margin-bottom: 0px;" class='valid_deactive'>Investment Amount is
+                required</p>
+              <input type="number" name="" id="invstamount" class='form__input' required>
+
+
+              <select id="invst_type" class='form__input'>
+                <option value="week" selected>Weekly</option>
+                <option value="mon">Monthly</option>
+                <option value="quat">Quarterly</option>
+              </select>
+            </div>
+            <br>
+
+            <br><label class="form__label" for="first-name">Expected Annual Returns (%) <em class="alert">*</em></label>
+            <p id='val_rate' style="color: red; margin-bottom: 0px;" class='valid_deactive'>Expected Annual Returns is
+              required</p>
+            <input type="number" name="" id="expreturn" class='form__input' required><br>
+          </div>
+
+          <div class="col-sm-6">
+            <br><label class="form__label" for="first-name" id="field3">Investment Period (Years) : <em
+                class="alert">*</em></label>
+            <p id='val_per' style="color: red; margin-bottom: 0px;" class='valid_deactive'>Investment Period is required
+            </p>
+            <input type="number" name="" id="invstperiod" class='form__input' required>
+
+            <br><label class="form__label" for="first-name">Adjust for Inflation ? <em class="alert">*</em></label>
+            <select id="inflation" class='form__input'>
+              <option value="no" selected>No Inflation</option>
+              <option value="6">6%</option>
+              <option value="8">8%</option>
+              <option value="10">10%</option>
+              <option value="12">12%</option>
+            </select><br>
+          </div>
+      </div>
+
+
+      <button type="button" class="button" id="calculatebtn">Calculate</button>
+      </form>
+
+
+  </div>
+  <div class="container-fluid" id="result_cont" style="display: none;">
+
+    <div id="result1" class="container res-box">
+      <label class="form-field-label" for="first-name">Expected Amount: <em class="alert">*</em></label>
+      <span id="rf1" style="margin-left:5px; color:black; ">Rs. &nbsp;</span>
+      <br><label class="form-field-label" for="first-name">Amount Invested: <em class="alert">*</em></label>
+      <span id="rf2" style="margin-left:5px; color:black; ">Rs. &nbsp;</span>
+      <br><label class="form-field-label" for="first-name">Profit Earned: <em class="alert">*</em></label>
+      <span id="rf3" style="margin-left:5px; color:black; ">Rs. &nbsp;</span>
+
+    </div>
+    <div id="result2" class="container res-box">
+      <canvas id="myChart" width="40%"></canvas>
+    </div>
+
+    <div class="container res-box" id="result3">
+      <table class="table table-hover">
+        <caption style="caption-side: top; text-align: center;" id="tab_cap">Projected SIP returns for various
+          time durations. [ @rate ]</caption>
+        <thead>
+          <tr>
+            <th scope="col">Duration</th>
+            <th scope="col">SIP Amount (₹)</th>
+            <th scope="col">Future Value (₹)</th>
+          </tr>
+        </thead>
+        <tbody id="projectTable">
+
+        </tbody>
+      </table>
+
+    </div>
+
+  </div>
+
+  </section>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="{{ url_for('static',filename='js/activity5.js') }}"></script>
+
+</body>
+<script>
+  var result = {};
+
+  function validateInput() {
+    if (invstamount.value == "" || invstperiod.value == "" || expreturn.value == "") {
+      return false;
+
+    }
+    return true;
+  }
+
+  function createGraph() {
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var stackedBar = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Amount in Rs'],
+        datasets: [{
+          label: 'Invested Amount',
+          data: [result.amount_invested],
+          backgroundColor: '#F2AF29',
+        },
+        {
+          label: 'Profit Earned',
+          data: [result.profit_earned],
+          backgroundColor: '#45CB85',
+        }
+        ]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            stacked: true
+          }],
+          yAxes: [{
+            stacked: true
+          }]
+        }
+      }
+    });
+
+  }
+
+  function createTable() {
+    var var_year = Number(invstperiod.value);
+    var table_dynamic = ``;
+    for (var i = 0; i < 11; i++) {
+
+      var proj_result = calculateProjectedData(var_year);
+      table_dynamic += `
+      <tr>
+        <td>${var_year} years </td>
+        <td>₹ ${invstamount.value}</td>
+        <td>₹ ${proj_result.expected_amount}</td>
+       </tr> 
+      `
+      var_year += 3;
+
+    }
+    tab_cap.innerText = `Projected SIP returns for various time durations. [ @${expreturn.value} ]`;
+    projectTable.innerHTML = table_dynamic;
+
+  }
+
+  function loadResult() {
+    result = calculateSIP();
+    window.scrollBy(0, 350);
+    rf1.innerText = 'Rs. ' + result.expected_amount;
+    rf2.innerText = 'Rs. ' + result.amount_invested;
+    rf3.innerText = 'Rs. ' + result.profit_earned;
+    createGraph();
+    createTable();
+    console.log(result);
+  }
+  $("#calculatebtn").click(function () {
+    val_amnt.style.display = 'none';
+    val_rate.style.display = 'none';
+    val_per.style.display = 'none';
+    if (validateInput()) {
+
+      $("#result_cont").fadeIn();
+      loadResult();
+    } else {
+      if (invstamount.value == "") {
+        val_amnt.style.display = 'block';
+      }
+      if (invstperiod.value == "") {
+        val_per.style.display = 'block';
+      }
+      if (expreturn.value == "") {
+        val_rate.style.display = 'block';
+      }
+    }
+
+  });
+</script>
+
+</html>
